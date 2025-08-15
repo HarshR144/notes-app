@@ -4,6 +4,7 @@ import com.napp.notes_application.dto.LoginRequestDto;
 import com.napp.notes_application.dto.LoginResponseDto;
 import com.napp.notes_application.service.AuthService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.security.auth.login.LoginException;
 import java.util.Optional;
 
+@Slf4j
 @RestController
 public class AuthController {
 
@@ -47,16 +49,21 @@ public class AuthController {
     public ResponseEntity<LoginResponseDto> signup(@Valid @RequestBody LoginRequestDto loginRequestDto
             ,@RequestHeader(value = "Authorization", required = false) String authHeader){
 
-//       TODO
-//        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-//            String token = authHeader.substring(7);
-//            if (jwtUtil.validateToken(token)) {
-//                return ResponseEntity.ok(new LoginResponse(token, "Already logged in"));
-//            }
-//        }
+        log.info("Signup request received for email: {}", loginRequestDto.getEmail());
 
-        String token = authService.signup(loginRequestDto);
-        return ResponseEntity.ok(new LoginResponseDto(token));
+        try {
+            String token = authService.signup(loginRequestDto);
+            log.info("Signup successful for email: {}", loginRequestDto.getEmail());
+            return ResponseEntity.ok(new LoginResponseDto(token));
+        } catch (Exception e) {
+            log.error("Signup failed for email: {}", loginRequestDto.getEmail(), e);
+            return ResponseEntity.badRequest().build();
+        }
+    }
+    // Add an OPTIONS handler if needed (though Spring should handle this automatically)
+    @RequestMapping(value = {"/login", "/signup"}, method = RequestMethod.OPTIONS)
+    public ResponseEntity<?> handleOptions() {
+        return ResponseEntity.ok().build();
     }
 
 }

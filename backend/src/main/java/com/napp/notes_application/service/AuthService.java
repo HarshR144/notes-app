@@ -30,7 +30,7 @@ public class AuthService {
                 .filter(u -> passwordEncoder.matches(loginRequestDto.getPassword(),u.getPassword()))
                 .map(u-> jwtUtil.generateToken(u.getEmail()));
 
-        return token;
+        return token ;
 
     }
     public String signup(LoginRequestDto loginRequestDto){

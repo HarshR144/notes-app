@@ -17,6 +17,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -24,6 +26,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final UserService userService;
+
+    // Public endpoints that don't require authentication
+    private static final List<String> PUBLIC_PATHS = Arrays.asList(
+            "/login", "/signup", "/h2-console"
+    );
 
     public JwtAuthenticationFilter(JwtUtil jwtUtil, UserService userService) {
         this.jwtUtil = jwtUtil;
@@ -36,6 +43,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
+        String path = request.getRequestURI();
+        String method = request.getMethod();
+
+        if ("OPTIONS".equals(method)) {
+            log.info("Skipping JWT filter for OPTIONS request");
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // Skip JWT processing for public paths
+        if (isPublicPath(path)) {
+            log.info("Skipping JWT filter for public path: {}", path);
+            filterChain.doFilter(request, response);
+            return;
+        }
         String authHeader = request.getHeader("Authorization");
         log.info("auth header:{}",authHeader);
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -60,5 +82,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+    private boolean isPublicPath(String path) {
+        return PUBLIC_PATHS.stream().anyMatch(path::startsWith);
     }
 }
