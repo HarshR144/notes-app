@@ -3,7 +3,6 @@ package com.napp.notes_application.service;
 import com.napp.notes_application.dto.NoteRequestDto;
 import com.napp.notes_application.dto.NoteResponseDto;
 import com.napp.notes_application.exception.NoteNotFoundException;
-import com.napp.notes_application.exception.UserNotFoundException;
 import com.napp.notes_application.model.Note;
 import com.napp.notes_application.model.User;
 import com.napp.notes_application.repository.NoteRepository;
@@ -45,7 +44,7 @@ public class NoteService {
 
 
     public NoteResponseDto saveNote(NoteRequestDto noteRequestDto,UUID userId){
-        User user = userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException("User not found"));
+        User user = userRepository.findById(userId).orElseThrow(()-> new NoteNotFoundException("User not found"));
         Note note = new Note();
         note.setUser(user);
         note.setTitle(noteRequestDto.getTitle());

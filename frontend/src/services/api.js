@@ -1,7 +1,6 @@
 import TokenManager from './tokenManager';
 
-const API_BASE_URL = 'http://localhost:8080';
-
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API = {
   request: async (url, options = {}) => {
     const publicPaths = ['/login', '/signup'];
