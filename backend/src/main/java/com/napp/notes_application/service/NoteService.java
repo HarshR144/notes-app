@@ -3,6 +3,7 @@ package com.napp.notes_application.service;
 import com.napp.notes_application.dto.NoteRequestDto;
 import com.napp.notes_application.dto.NoteResponseDto;
 import com.napp.notes_application.exception.NoteNotFoundException;
+import com.napp.notes_application.exception.UserNotFoundException;
 import com.napp.notes_application.model.Note;
 import com.napp.notes_application.model.User;
 import com.napp.notes_application.repository.NoteRepository;
