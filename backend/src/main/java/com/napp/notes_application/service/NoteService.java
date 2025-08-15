@@ -44,7 +44,7 @@ public class NoteService {
 
 
     public NoteResponseDto saveNote(NoteRequestDto noteRequestDto,UUID userId){
-        User user = userRepository.findById(userId).orElseThrow(()-> new NoteNotFoundException("User not found"));
+        User user = userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException("User not found"));
         Note note = new Note();
         note.setUser(user);
         note.setTitle(noteRequestDto.getTitle());
