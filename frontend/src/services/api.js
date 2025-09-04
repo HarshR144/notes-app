@@ -41,8 +41,13 @@ const API = {
         
         if (hasJsonContent) {
           try {
-            const errorData = await response.json();
-            errorMessage = errorData.message || errorData.error || errorMessage;
+            const errorData = await response.json(); 
+            if (errorData.message || errorData.error) {
+                errorMessage = errorData.message || errorData.error;
+            } 
+            else {
+                errorMessage = Object.values(errorData).join(', ');
+            }
           } catch (e) {
             // If JSON parsing fails, use status text
             errorMessage = response.statusText || errorMessage;
